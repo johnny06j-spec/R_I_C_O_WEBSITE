@@ -5,6 +5,13 @@ import heroBg from '../assets/hero.png'
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 
+// Helper function to resolve relative /uploads URLs to the backend server
+const getImageUrl = (url) => {
+  if (!url) return 'https://via.placeholder.com/800x600?text=No+Image'
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  return `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
 // Fallback images if database is empty initially
 const sampleGallery = [
   { _id: '1', title: 'Interactive Learning in Science Lab', category: 'Academic', imageUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80' },
@@ -48,7 +55,7 @@ export default function Gallery() {
 
   const filteredItems = activeCategory === 'All' 
     ? items 
-    : items.filter(item => item.category.toLowerCase() === activeCategory.toLowerCase())
+    : items.filter(item => item.category?.toLowerCase() === activeCategory.toLowerCase())
 
   return (
     <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans">
@@ -126,7 +133,7 @@ export default function Gallery() {
               >
                 <div className="h-56 bg-slate-200 overflow-hidden relative">
                   <img
-                    src={item.imageUrl}
+                    src={getImageUrl(item.imageUrl)}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
