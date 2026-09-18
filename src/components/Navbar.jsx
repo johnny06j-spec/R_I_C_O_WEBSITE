@@ -64,9 +64,9 @@ export default function Navbar() {
 
           {/* Action Buttons: Parent Portal & Admin */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* External Portal App Link (When ready) */}
+            {/* External Portal App Link */}
             <a
-              href="https://app.radiantintellectuals.com"
+              href="https://portal.radiantintellectualscollege.com/admin"
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1.5 border border-amber-400/60 hover:bg-emerald-900/50 text-amber-400 px-3.5 py-2 rounded text-[11px] font-bold uppercase tracking-wider transition"
@@ -112,7 +112,7 @@ export default function Navbar() {
 
           <div className="pt-2 flex flex-col gap-2">
             <a
-              href="https://app.radiantintellectuals.com"
+              href="https://portal.radiantintellectualscollege.com/admin"
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 border border-amber-400/60 text-amber-400 py-2.5 rounded text-xs font-bold uppercase tracking-wider"
