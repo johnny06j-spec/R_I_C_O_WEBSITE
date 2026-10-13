@@ -45,31 +45,31 @@ export default function About() {
         </div>
       </section>
 
-      {/* 2. DYNAMIC PRINCIPAL / ABOUT WELCOME */}
+      {/* 2. PRINCIPAL'S WELCOME & ABOUT SECTION */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           
-          {/* Featured Image Container */}
+          {/* Principal's Portrait Placeholder / Featured Image Container */}
           <div className="lg:col-span-5">
             <div className="relative">
-              <div className="aspect-[4/5] rounded-xl bg-slate-200 border-4 border-white shadow-xl overflow-hidden relative flex items-center justify-center">
+              <div className="aspect-[4/5] rounded-xl bg-[#d5dcde] border-4 border-white shadow-xl overflow-hidden relative flex items-center justify-center">
                 {settings?.aboutImageUrl ? (
                   <img 
                     src={settings.aboutImageUrl} 
-                    alt="Radiant Intellectuals College" 
+                    alt="Principal / School Management" 
                     className="w-full h-full object-cover" 
                   />
                 ) : (
-                  <div className="absolute inset-0 bg-[#062016]/10 flex flex-col items-center justify-center text-slate-500 p-6 text-center">
-                    <div className="w-20 h-20 rounded-full bg-[#062016] text-amber-400 flex items-center justify-center mb-4">
+                  <div className="absolute inset-0 bg-slate-300/40 flex flex-col items-center justify-center text-slate-600 p-6 text-center">
+                    <div className="w-20 h-20 rounded-full bg-[#062016] text-amber-400 flex items-center justify-center mb-4 shadow-lg">
                       <Award size={36} />
                     </div>
-                    <span className="font-serif font-bold text-slate-800 text-lg">Radiant Intellectuals' College</span>
-                    <span className="text-xs text-slate-500 mt-1">Emmanuel, Excellence</span>
+                    <span className="font-serif font-bold text-slate-900 text-xl">Principal's Portrait</span>
+                    <span className="text-xs text-slate-600 mt-1 font-medium">Radiant Intellectuals' College</span>
                   </div>
                 )}
               </div>
-              <div className="absolute -bottom-6 -right-6 bg-[#051810] text-white p-4 rounded-lg shadow-lg border border-amber-400/40 hidden sm:block">
+              <div className="absolute -bottom-6 -right-6 bg-[#051810] text-white p-4 rounded-lg shadow-lg border border-amber-400/40 hidden sm:block z-10">
                 <p className="font-serif font-bold text-amber-400 text-sm">EMMANUEL, EXCELLENCE.</p>
                 <p className="text-[10px] text-slate-300 uppercase tracking-wider">Our Guiding Light</p>
               </div>
