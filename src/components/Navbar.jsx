@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Settings, User } from 'lucide-react'
+import { Menu, X, User } from 'lucide-react'
 import logo from '../assets/logo.png'
 
 export default function Navbar() {
@@ -62,9 +62,8 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Action Buttons: Parent Portal & Admin */}
+          {/* Parent/Student Portal Button Only */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* External Portal Link */}
             <a
               href="https://portal.radiantintellectualscollege.com"
               target="_blank"
@@ -73,17 +72,9 @@ export default function Navbar() {
             >
               <User size={14} /> PARENT/STUDENT PORTAL
             </a>
-
-            {/* Local Route Link to Website Admin Panel */}
-            <Link
-              to="/admin"
-              className="flex items-center gap-1.5 bg-amber-400 hover:bg-amber-500 text-[#062016] px-3.5 py-2 rounded text-[11px] font-bold uppercase tracking-wider transition shadow"
-            >
-              <Settings size={14} /> ADMIN
-            </Link>
           </div>
 
-          {/* Mobile Menu Toggle Button */}
+          {/* Mobile Menu Toggle */}
           <div className="lg:hidden flex items-center gap-2">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -110,7 +101,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          <div className="pt-2 flex flex-col gap-2">
+          <div className="pt-2">
             <a
               href="https://portal.radiantintellectualscollege.com"
               target="_blank"
@@ -119,13 +110,6 @@ export default function Navbar() {
             >
               <User size={14} /> PARENT/STUDENT PORTAL
             </a>
-            <Link
-              to="/admin"
-              onClick={() => setIsOpen(false)}
-              className="flex items-center justify-center gap-2 bg-amber-400 text-[#062016] py-2.5 rounded text-xs font-bold uppercase tracking-wider"
-            >
-              <Settings size={14} /> ADMIN
-            </Link>
           </div>
         </div>
       )}

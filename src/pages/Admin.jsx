@@ -23,11 +23,11 @@ export default function Admin() {
   const [newsList, setNewsList] = useState([])
   const [contactList, setContactList] = useState([])
 
-  // Home Settings State
+  // Home & Site Settings State
   const [homeSettings, setHomeSettings] = useState({
     stats: DEFAULT_STATS,
-    aboutTitle: 'Nurturing Minds. Building Leaders.',
-    aboutDescription: "At Radiant Intellectuals' College, we are committed to raising a generation of learners who excel academically, demonstrate strong moral values and become purposeful leaders in their communities and the world.",
+    aboutTitle: 'Building a Legacy of Intellectual & Character Excellence',
+    aboutDescription: "At Radiant Intellectuals' College, we believe that true education reaches beyond academic scores. It shapes the mind, strengthens moral character, and equips young individuals to lead purposefully in an evolving world.",
     aboutImageUrl: '',
     whatsappNumber: '2348000000000'
   })
@@ -111,7 +111,7 @@ export default function Admin() {
     }
   }
 
-  // --- Update Home Settings ---
+  // --- Update Home / Site Settings ---
   const handleStatChange = (index, field, val) => {
     const currentStats = homeSettings.stats && homeSettings.stats.length > 0 ? homeSettings.stats : DEFAULT_STATS
     const updatedStats = [...currentStats]
@@ -126,7 +126,7 @@ export default function Admin() {
     try {
       let imageUrl = homeSettings.aboutImageUrl
 
-      // Optional image upload to Cloudinary via backend gallery route
+      // Image upload to Cloudinary via backend gallery route
       if (aboutFile) {
         const imageFormData = new FormData()
         imageFormData.append('title', 'About Section Image')
@@ -162,17 +162,17 @@ export default function Admin() {
 
       if (res.ok) {
         const updatedData = await res.json()
-        setStatusMsg('Homepage settings updated successfully!')
+        setStatusMsg('Site settings and About Us page controls updated successfully!')
         setAboutFile(null)
         setHomeSettings({
           ...updatedData,
           stats: (updatedData.stats && updatedData.stats.length > 0) ? updatedData.stats : DEFAULT_STATS
         })
       } else {
-        setStatusMsg('Failed to update homepage settings.')
+        setStatusMsg('Failed to update settings.')
       }
     } catch (err) {
-      setStatusMsg('Error updating homepage settings.')
+      setStatusMsg('Error updating settings.')
     }
   }
 
@@ -289,7 +289,7 @@ export default function Admin() {
             <Lock size={22} />
           </div>
           <h2 className="font-serif font-extrabold text-center text-2xl mb-1">Website Admin Portal</h2>
-          <p className="text-center text-xs text-slate-300 mb-6">Manage homepage, gallery, news, and inquiries.</p>
+          <p className="text-center text-xs text-slate-300 mb-6">Manage homepage, about us page, gallery, news, and inquiries.</p>
 
           {loginError && (
             <div className="p-3 bg-rose-900/50 border border-rose-500 text-rose-200 text-xs rounded mb-4 flex items-center gap-2">
@@ -370,7 +370,7 @@ export default function Admin() {
               activeTab === 'home-settings' ? 'bg-[#062016] text-amber-400' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            <Sliders size={15} /> Home Controls
+            <Sliders size={15} /> Site & Page Controls
           </button>
           <button
             onClick={() => setActiveTab('gallery')}
@@ -407,7 +407,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* 1. HOMEPAGE CONTROLS */}
+        {/* 1. HOMEPAGE & ABOUT US CONTROLS */}
         {activeTab === 'home-settings' && (
           <form onSubmit={handleSaveHomeSettings} className="space-y-8">
             
@@ -454,10 +454,10 @@ export default function Admin() {
               </div>
             </div>
 
-            {/* About Us & WhatsApp Editor */}
+            {/* About Us & Global WhatsApp Editor */}
             <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
-              <h3 className="font-serif font-bold text-slate-900 text-lg mb-1">About Us Section & WhatsApp Support</h3>
-              <p className="text-xs text-slate-500 mb-4">Manage the homepage about copy, featured image, and contact widget phone number.</p>
+              <h3 className="font-serif font-bold text-slate-900 text-lg mb-1">About Us Section & Global WhatsApp Support</h3>
+              <p className="text-xs text-slate-500 mb-4">Manage the copy and image for Home and About Us pages, plus the WhatsApp button number active on all pages.</p>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-3 text-xs">
@@ -474,7 +474,7 @@ export default function Admin() {
                   <div>
                     <label className="block font-bold mb-1 text-slate-700">About Description</label>
                     <textarea
-                      rows={5}
+                      rows={6}
                       value={homeSettings.aboutDescription}
                       onChange={(e) => setHomeSettings({ ...homeSettings, aboutDescription: e.target.value })}
                       className="w-full border border-slate-300 rounded p-2.5 bg-white leading-relaxed"
@@ -484,7 +484,7 @@ export default function Admin() {
 
                 <div className="space-y-3 text-xs">
                   <div>
-                    <label className="block font-bold mb-1 text-slate-700">WhatsApp Phone Number (With Country Code)</label>
+                    <label className="block font-bold mb-1 text-slate-700">Global WhatsApp Support Phone Number (With Country Code)</label>
                     <input
                       type="text"
                       placeholder="e.g. 2348012345678"
@@ -495,7 +495,7 @@ export default function Admin() {
                   </div>
 
                   <div>
-                    <label className="block font-bold mb-1 text-slate-700">Upload New About Image (Optional)</label>
+                    <label className="block font-bold mb-1 text-slate-700">Upload Featured Image (Home & About Page)</label>
                     <input
                       type="file"
                       accept="image/*"
@@ -506,7 +506,7 @@ export default function Admin() {
 
                   {homeSettings.aboutImageUrl && (
                     <div>
-                      <p className="font-bold text-slate-700 mb-1">Current About Image Preview:</p>
+                      <p className="font-bold text-slate-700 mb-1">Current Featured Image Preview:</p>
                       <img src={homeSettings.aboutImageUrl} alt="Current About" className="h-28 w-auto rounded border border-slate-200 object-cover" />
                     </div>
                   )}
@@ -518,7 +518,7 @@ export default function Admin() {
                   type="submit"
                   className="flex items-center gap-2 bg-[#062016] hover:bg-emerald-950 text-amber-400 font-bold px-6 py-3 rounded text-xs uppercase tracking-wider transition shadow-md"
                 >
-                  <Save size={16} /> SAVE HOMEPAGE CONTROLS
+                  <Save size={16} /> SAVE SETTINGS
                 </button>
               </div>
             </div>
