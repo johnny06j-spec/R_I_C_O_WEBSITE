@@ -35,7 +35,7 @@ export default function Home() {
     <Building2 key="years" size={22} />
   ]
 
-  const statsList = settings?.stats || [
+  const statsList = (settings?.stats && settings.stats.length > 0) ? settings.stats : [
     { value: '700+', label: 'STUDENTS', subtext: 'Future leaders in the making' },
     { value: '45+', label: 'QUALIFIED TEACHERS', subtext: 'Dedicated and experienced' },
     { value: '98%', label: 'SUCCESS RATE', subtext: 'Consistent academic excellence' },
@@ -46,7 +46,7 @@ export default function Home() {
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hello,%20I%20would%20like%20to%20make%20an%20enquiry%20about%20Radiant%20Intellectuals'%20College.`
 
   return (
-    <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans relative">
+    <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans relative overflow-x-hidden">
       
       {/* 1. HERO SECTION WITH VIBRANT BACKGROUND */}
       <section className="relative min-h-[640px] flex items-center overflow-hidden border-b border-emerald-900/30">
@@ -112,14 +112,14 @@ export default function Home() {
       <section className="bg-[#051810] text-white py-6 border-b-4 border-amber-400 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6">
           {statsList.map((stat, idx) => (
-            <div key={idx} className="flex items-center gap-4">
+            <div key={idx} className="flex items-center gap-4 min-w-0">
               <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 flex items-center justify-center text-amber-400 bg-[#0a2e20] shrink-0">
                 {statIcons[idx % statIcons.length]}
               </div>
-              <div>
-                <p className="text-2xl font-serif font-bold text-white">{stat.value}</p>
-                <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider">{stat.label}</p>
-                <p className="text-[10px] text-slate-400">{stat.subtext}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-2xl font-serif font-bold text-white truncate">{stat.value}</p>
+                <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider truncate">{stat.label}</p>
+                <p className="text-[10px] text-slate-400 truncate">{stat.subtext}</p>
               </div>
             </div>
           ))}
@@ -131,13 +131,13 @@ export default function Home() {
         <div className="grid lg:grid-cols-12 gap-6">
           
           {/* Card 1: DYNAMIC ABOUT OUR SCHOOL */}
-          <div className="lg:col-span-5 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-            <div className="grid sm:grid-cols-2 gap-4 items-center">
-              <div>
+          <div className="lg:col-span-5 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between overflow-hidden">
+            <div className="grid sm:grid-cols-2 gap-4 items-start overflow-hidden">
+              <div className="min-w-0 flex-1">
                 <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest block mb-1">
                   ABOUT OUR SCHOOL
                 </span>
-                <h3 className="font-serif font-bold text-slate-900 text-xl leading-snug mb-3">
+                <h3 className="font-serif font-bold text-slate-900 text-xl leading-snug mb-3 break-words">
                   {settings?.aboutTitle || (
                     <>
                       Nurturing Minds. <br />
@@ -145,17 +145,17 @@ export default function Home() {
                     </>
                   )}
                 </h3>
-                <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                <p className="text-xs text-slate-600 leading-relaxed mb-4 break-words whitespace-pre-line">
                   {settings?.aboutDescription || "At Radiant Intellectuals' College, we are committed to raising a generation of learners who excel academically, demonstrate strong moral values and become purposeful leaders in their communities and the world."}
                 </p>
                 <Link
                   to="/about"
-                  className="inline-flex items-center gap-2 bg-[#062016] text-white text-xs font-semibold px-4 py-2 rounded hover:bg-emerald-900 transition uppercase tracking-wider"
+                  className="inline-flex items-center gap-2 bg-[#062016] text-white text-xs font-semibold px-4 py-2 rounded hover:bg-emerald-900 transition uppercase tracking-wider mb-2"
                 >
                   LEARN MORE <ArrowRight size={14} />
                 </Link>
               </div>
-              <div className="h-48 sm:h-full rounded-lg bg-slate-200 overflow-hidden relative min-h-[160px]">
+              <div className="h-48 sm:h-full rounded-lg bg-slate-200 overflow-hidden relative min-h-[180px] shrink-0">
                 {settings?.aboutImageUrl ? (
                   <img src={settings.aboutImageUrl} alt="Students Learning" className="w-full h-full object-cover" />
                 ) : (
@@ -168,16 +168,16 @@ export default function Home() {
           </div>
 
           {/* Card 2: Academics */}
-          <div className="lg:col-span-4 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+          <div className="lg:col-span-4 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between overflow-hidden">
             <div>
               <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest block mb-1">
                 ACADEMICS
               </span>
-              <h3 className="font-serif font-bold text-slate-900 text-xl leading-snug mb-3">
+              <h3 className="font-serif font-bold text-slate-900 text-xl leading-snug mb-3 break-words">
                 A Holistic <br />
                 Learning Experience
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed mb-6">
+              <p className="text-xs text-slate-600 leading-relaxed mb-6 break-words">
                 From foundational learning to advanced studies, we provide a balanced curriculum that develops intellect, character, creativity and leadership.
               </p>
             </div>
@@ -197,10 +197,10 @@ export default function Home() {
               <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block mb-1">
                 ADMISSIONS
               </span>
-              <h3 className="font-serif font-bold text-white text-xl leading-snug mb-3">
+              <h3 className="font-serif font-bold text-white text-xl leading-snug mb-3 break-words">
                 Join the RICO Family
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed mb-6">
+              <p className="text-xs text-slate-300 leading-relaxed mb-6 break-words">
                 We welcome passionate learners and supportive families. Begin your child's journey of excellence with us today.
               </p>
             </div>
