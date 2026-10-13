@@ -9,8 +9,7 @@ import {
   BookOpen, 
   ShieldCheck, 
   Lightbulb, 
-  Heart,
-  MessageCircle 
+  Heart 
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import heroBg from '../assets/hero.png'
@@ -41,9 +40,6 @@ export default function Home() {
     { value: '98%', label: 'SUCCESS RATE', subtext: 'Consistent academic excellence' },
     { value: '15+', label: 'YEARS OF EXCELLENCE', subtext: 'A legacy of impact' }
   ]
-
-  const whatsappNumber = settings?.whatsappNumber || '2348000000000'
-  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hello,%20I%20would%20like%20to%20make%20an%20enquiry%20about%20Radiant%20Intellectuals'%20College.`
 
   return (
     <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans relative overflow-x-hidden">
@@ -138,12 +134,7 @@ export default function Home() {
                   ABOUT OUR SCHOOL
                 </span>
                 <h3 className="font-serif font-bold text-slate-900 text-xl leading-snug mb-3 break-words">
-                  {settings?.aboutTitle || (
-                    <>
-                      Nurturing Minds. <br />
-                      Building Leaders.
-                    </>
-                  )}
+                  {settings?.aboutTitle || 'Nurturing Minds. Building Leaders.'}
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4 break-words whitespace-pre-line">
                   {settings?.aboutDescription || "At Radiant Intellectuals' College, we are committed to raising a generation of learners who excel academically, demonstrate strong moral values and become purposeful leaders in their communities and the world."}
@@ -261,18 +252,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* 5. FLOATING WHATSAPP BUTTON */}
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 px-5 rounded-full shadow-2xl transition-transform hover:scale-105 active:scale-95"
-        aria-label="Chat with us on WhatsApp"
-      >
-        <MessageCircle size={22} className="fill-current" />
-        <span className="text-xs uppercase tracking-wider">Chat with us</span>
-      </a>
 
     </div>
   )

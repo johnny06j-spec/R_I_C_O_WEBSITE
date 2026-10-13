@@ -1,11 +1,23 @@
+import { useEffect, useState } from 'react'
 import { ArrowRight, BookOpen, ShieldCheck, Heart, Lightbulb, Target, Compass, Award } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import logo from '../assets/logo.png' // Clean crest logo
-import heroBg from '../assets/hero.png' // Campus background image
+import logo from '../assets/logo.png'
+import heroBg from '../assets/hero.png'
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 export default function About() {
+  const [settings, setSettings] = useState(null)
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/home-settings`)
+      .then((res) => res.json())
+      .then((data) => setSettings(data))
+      .catch((err) => console.error('Error loading settings on About page:', err))
+  }, [])
+
   return (
-    <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans">
+    <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans relative overflow-x-hidden">
       
       {/* 1. HEADER BREEZE BANNER */}
       <section className="relative bg-[#062016] text-white py-16 overflow-hidden border-b border-emerald-900/40">
@@ -30,22 +42,49 @@ export default function About() {
         </div>
       </section>
 
-      {/* 2. PRINCIPAL'S WELCOME */}
+      {/* 2. HOMEPAGE OVERVIEW SUMMARY (WITHOUT LEARN MORE BUTTON) */}
+      <section className="bg-white py-10 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="p-8 rounded-2xl bg-[#f0f4f2] border border-emerald-900/10 shadow-sm flex flex-col md:flex-row gap-8 items-center">
+            <div className="flex-1">
+              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest block mb-1">
+                ABOUT OUR SCHOOL
+              </span>
+              <h2 className="font-serif font-extrabold text-slate-900 text-2xl sm:text-3xl mb-3">
+                {settings?.aboutTitle || 'Nurturing Minds. Building Leaders.'}
+              </h2>
+              <p className="text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                {settings?.aboutDescription || "At Radiant Intellectuals' College, we are committed to raising a generation of learners who excel academically, demonstrate strong moral values and become purposeful leaders in their communities and the world."}
+              </p>
+            </div>
+            {settings?.aboutImageUrl && (
+              <div className="w-full md:w-64 h-44 rounded-xl overflow-hidden shadow shrink-0">
+                <img src={settings.aboutImageUrl} alt="About RICO" className="w-full h-full object-cover" />
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* 3. PRINCIPAL'S WELCOME */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           
-          {/* Image / Portrait Placeholder */}
+          {/* Principal Portrait Placeholder / Image */}
           <div className="lg:col-span-5">
             <div className="relative">
-              <div className="aspect-[4/5] rounded-xl bg-slate-200 border-4 border-white shadow-xl overflow-hidden relative">
-                {/* Swap with real portrait image in assets later */}
-                <div className="absolute inset-0 bg-[#062016]/10 flex flex-col items-center justify-center text-slate-500 p-6 text-center">
-                  <div className="w-20 h-20 rounded-full bg-[#062016] text-amber-400 flex items-center justify-center mb-4">
-                    <Award size={36} />
+              <div className="aspect-[4/5] rounded-xl bg-slate-200 border-4 border-white shadow-xl overflow-hidden relative flex items-center justify-center">
+                {settings?.principalImageUrl ? (
+                  <img src={settings.principalImageUrl} alt="Principal Portrait" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 bg-[#062016]/10 flex flex-col items-center justify-center text-slate-500 p-6 text-center">
+                    <div className="w-20 h-20 rounded-full bg-[#062016] text-amber-400 flex items-center justify-center mb-4">
+                      <Award size={36} />
+                    </div>
+                    <span className="font-serif font-bold text-slate-800 text-lg">Principal's Portrait</span>
+                    <span className="text-xs text-slate-500 mt-1">Radiant Intellectuals' College</span>
                   </div>
-                  <span className="font-serif font-bold text-slate-800 text-lg">Principal's Portrait</span>
-                  <span className="text-xs text-slate-500 mt-1">Radiant Intellectuals' College</span>
-                </div>
+                )}
               </div>
               <div className="absolute -bottom-6 -right-6 bg-[#051810] text-white p-4 rounded-lg shadow-lg border border-amber-400/40 hidden sm:block">
                 <p className="font-serif font-bold text-amber-400 text-sm">EMMANUEL, EXCELLENCE.</p>
@@ -60,17 +99,15 @@ export default function About() {
               WELCOME TO RICO
             </span>
             <h2 className="font-serif font-extrabold text-slate-900 text-2xl sm:text-4xl leading-tight mb-6">
-              Building a Legacy of Intellectual & Character Excellence
+              {settings?.principalTitle || 'Building a Legacy of Intellectual & Character Excellence'}
             </h2>
-            <div className="space-y-4 text-slate-600 text-sm leading-relaxed">
+            <div className="space-y-4 text-slate-600 text-sm leading-relaxed whitespace-pre-line">
               <p>
-                At Radiant Intellectuals' College, we believe that true education reaches beyond academic scores. It shapes the mind, strengthens moral character, and equips young individuals to lead purposefully in an evolving world.
-              </p>
-              <p>
-                Founded on unwavering ethical principles and a dedication to world-class learning, our institution provides a secure, modern, and supportive environment where every student is inspired to discover their potential.
-              </p>
-              <p>
-                Whether in our state-of-the-art classrooms, science laboratories, or sports grounds, our dedicated educators nurture curiosity, critical thinking, and godliness in all learners.
+                {settings?.principalDescription || `At Radiant Intellectuals' College, we believe that true education reaches beyond academic scores. It shapes the mind, strengthens moral character, and equips young individuals to lead purposefully in an evolving world.
+
+Founded on unwavering ethical principles and a dedication to world-class learning, our institution provides a secure, modern, and supportive environment where every student is inspired to discover their potential.
+
+Whether in our state-of-the-art classrooms, science laboratories, or sports grounds, our dedicated educators nurture curiosity, critical thinking, and godliness in all learners.`}
               </p>
             </div>
 
@@ -86,11 +123,10 @@ export default function About() {
         </div>
       </section>
 
-      {/* 3. MISSION & VISION */}
+      {/* 4. MISSION & VISION */}
       <section className="bg-[#051810] text-white py-16 border-y-4 border-amber-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8">
           
-          {/* Mission Card */}
           <div className="bg-[#0a2e20] p-8 rounded-xl border border-emerald-800/60 shadow-lg relative overflow-hidden">
             <div className="w-12 h-12 rounded-full bg-amber-400/10 border border-amber-400/40 text-amber-400 flex items-center justify-center mb-6">
               <Target size={24} />
@@ -103,7 +139,6 @@ export default function About() {
             </p>
           </div>
 
-          {/* Vision Card */}
           <div className="bg-[#0a2e20] p-8 rounded-xl border border-emerald-800/60 shadow-lg relative overflow-hidden">
             <div className="w-12 h-12 rounded-full bg-amber-400/10 border border-amber-400/40 text-amber-400 flex items-center justify-center mb-6">
               <Compass size={24} />
@@ -119,7 +154,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* 4. CORE VALUES GRID */}
+      {/* 5. CORE VALUES GRID */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-bold text-amber-600 uppercase tracking-widest block mb-1">
@@ -168,22 +203,6 @@ export default function About() {
             <h3 className="font-serif font-bold text-slate-900 text-base mb-2">Leadership & Innovation</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
               Encouraging critical thinking, problem-solving, and digital competence for future leaders.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. SCHOOL ANTHEM / MOTTO SECTION */}
-      <section className="bg-white py-14 border-t border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <img src={logo} alt="RICO Crest" className="h-16 w-auto mx-auto mb-4 object-contain mix-blend-multiply" />
-          <h3 className="font-serif font-extrabold text-2xl text-slate-900 mb-1">SCHOOL MOTTO</h3>
-          <p className="text-amber-600 font-serif font-bold text-lg tracking-widest uppercase mb-6">
-            "EMMANUEL, EXCELLENCE."
-          </p>
-          <div className="p-6 bg-[#f7f5ee] rounded-xl border border-amber-200/60 shadow-inner">
-            <p className="text-xs text-slate-600 italic leading-relaxed max-w-xl mx-auto">
-              God with us in all our endeavors, driving our pursuit of intellectual, moral, and social leadership.
             </p>
           </div>
         </div>

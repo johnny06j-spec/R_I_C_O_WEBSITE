@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Lock, LogOut, Image, Newspaper, Mail, Plus, Trash2, CheckCircle2, ShieldAlert, Upload, Sliders, Save } from 'lucide-react'
 
-// Dynamic API Base URL from environment variable or local fallback
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 
 const DEFAULT_STATS = [
@@ -26,12 +25,17 @@ export default function Admin() {
   // Home & Site Settings State
   const [homeSettings, setHomeSettings] = useState({
     stats: DEFAULT_STATS,
-    aboutTitle: 'Building a Legacy of Intellectual & Character Excellence',
-    aboutDescription: "At Radiant Intellectuals' College, we believe that true education reaches beyond academic scores. It shapes the mind, strengthens moral character, and equips young individuals to lead purposefully in an evolving world.",
+    aboutTitle: 'Nurturing Minds. Building Leaders.',
+    aboutDescription: "At Radiant Intellectuals' College, we are committed to raising a generation of learners who excel academically, demonstrate strong moral values and become purposeful leaders in their communities and the world.",
     aboutImageUrl: '',
+    principalTitle: 'Building a Legacy of Intellectual & Character Excellence',
+    principalDescription: "At Radiant Intellectuals' College, we believe that true education reaches beyond academic scores. It shapes the mind, strengthens moral character, and equips young individuals to lead purposefully in an evolving world.\n\nFounded on unwavering ethical principles and a dedication to world-class learning, our institution provides a secure, modern, and supportive environment where every student is inspired to discover their potential.",
+    principalImageUrl: '',
     whatsappNumber: '2348000000000'
   })
+
   const [aboutFile, setAboutFile] = useState(null)
+  const [principalFile, setPrincipalFile] = useState(null)
 
   // Gallery Form States
   const [galleryTitle, setGalleryTitle] = useState('')
@@ -111,7 +115,6 @@ export default function Admin() {
     }
   }
 
-  // --- Update Home / Site Settings ---
   const handleStatChange = (index, field, val) => {
     const currentStats = homeSettings.stats && homeSettings.stats.length > 0 ? homeSettings.stats : DEFAULT_STATS
     const updatedStats = [...currentStats]
@@ -124,31 +127,48 @@ export default function Admin() {
     setStatusMsg('')
 
     try {
-      let imageUrl = homeSettings.aboutImageUrl
+      let aboutImg = homeSettings.aboutImageUrl
+      let principalImg = homeSettings.principalImageUrl
 
-      // Image upload to Cloudinary via backend gallery route
       if (aboutFile) {
-        const imageFormData = new FormData()
-        imageFormData.append('title', 'About Section Image')
-        imageFormData.append('category', 'Campus')
-        imageFormData.append('image', aboutFile)
+        const fd = new FormData()
+        fd.append('title', 'Homepage About Image')
+        fd.append('category', 'Campus')
+        fd.append('image', aboutFile)
 
         const uploadRes = await fetch(`${API_URL}/api/gallery`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
-          body: imageFormData
+          body: fd
         })
-
         if (uploadRes.ok) {
-          const uploadData = await uploadRes.json()
-          imageUrl = uploadData.imageUrl
+          const d = await uploadRes.json()
+          aboutImg = d.imageUrl
+        }
+      }
+
+      if (principalFile) {
+        const fd = new FormData()
+        fd.append('title', 'Principal Portrait Image')
+        fd.append('category', 'Campus')
+        fd.append('image', principalFile)
+
+        const uploadRes = await fetch(`${API_URL}/api/gallery`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: fd
+        })
+        if (uploadRes.ok) {
+          const d = await uploadRes.json()
+          principalImg = d.imageUrl
         }
       }
 
       const payload = {
         ...homeSettings,
         stats: homeSettings.stats && homeSettings.stats.length > 0 ? homeSettings.stats : DEFAULT_STATS,
-        aboutImageUrl: imageUrl
+        aboutImageUrl: aboutImg,
+        principalImageUrl: principalImg
       }
 
       const res = await fetch(`${API_URL}/api/home-settings`, {
@@ -162,8 +182,9 @@ export default function Admin() {
 
       if (res.ok) {
         const updatedData = await res.json()
-        setStatusMsg('Site settings and About Us page controls updated successfully!')
+        setStatusMsg('Site and About settings saved successfully!')
         setAboutFile(null)
+        setPrincipalFile(null)
         setHomeSettings({
           ...updatedData,
           stats: (updatedData.stats && updatedData.stats.length > 0) ? updatedData.stats : DEFAULT_STATS
@@ -176,11 +197,10 @@ export default function Admin() {
     }
   }
 
-  // --- Add Gallery Photo ---
   const handleAddGallery = async (e) => {
     e.preventDefault()
     if (!galleryFile) {
-      alert('Please select an image file from your device!')
+      alert('Please select an image file!')
       return
     }
 
@@ -193,28 +213,23 @@ export default function Admin() {
     try {
       const res = await fetch(`${API_URL}/api/gallery`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
         body: formData
       })
 
       if (res.ok) {
-        setStatusMsg('Photo uploaded and published to Gallery!')
+        setStatusMsg('Photo published to Gallery!')
         setGalleryTitle('')
         setGalleryCaption('')
         setGalleryFile(null)
         e.target.reset()
         fetchAdminData()
-      } else {
-        setStatusMsg('Failed to upload photo')
       }
     } catch (err) {
       setStatusMsg('Failed to upload photo')
     }
   }
 
-  // --- Delete Gallery Photo ---
   const handleDeleteGallery = async (id) => {
     if (!confirm('Are you sure you want to delete this photo?')) return
     try {
@@ -228,7 +243,6 @@ export default function Admin() {
     }
   }
 
-  // --- Add News Post ---
   const handleAddNews = async (e) => {
     e.preventDefault()
 
@@ -237,16 +251,12 @@ export default function Admin() {
     formData.append('category', newsCategory)
     formData.append('date', newsDate)
     formData.append('summary', newsSummary)
-    if (newsFile) {
-      formData.append('image', newsFile)
-    }
+    if (newsFile) formData.append('image', newsFile)
 
     try {
       const res = await fetch(`${API_URL}/api/news`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
         body: formData
       })
 
@@ -258,15 +268,12 @@ export default function Admin() {
         setNewsFile(null)
         e.target.reset()
         fetchAdminData()
-      } else {
-        setStatusMsg('Failed to publish news')
       }
     } catch (err) {
       setStatusMsg('Failed to publish news')
     }
   }
 
-  // --- Delete News Post ---
   const handleDeleteNews = async (id) => {
     if (!confirm('Delete this news post?')) return
     try {
@@ -280,7 +287,6 @@ export default function Admin() {
     }
   }
 
-  // UNAUTHENTICATED: LOGIN VIEW
   if (!token) {
     return (
       <div className="min-h-screen bg-[#051810] flex items-center justify-center p-4">
@@ -338,14 +344,10 @@ export default function Admin() {
     )
   }
 
-  // Safely resolve stats to display
   const displayStats = homeSettings.stats && homeSettings.stats.length > 0 ? homeSettings.stats : DEFAULT_STATS
 
-  // AUTHENTICATED: DASHBOARD VIEW
   return (
     <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans pb-16">
-      
-      {/* Header */}
       <header className="bg-[#062016] text-white py-6 border-b border-emerald-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div>
@@ -361,7 +363,6 @@ export default function Admin() {
         </div>
       </header>
 
-      {/* Navigation Tabs */}
       <div className="bg-white border-b border-slate-200 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap gap-3">
           <button
@@ -407,14 +408,13 @@ export default function Admin() {
           </div>
         )}
 
-        {/* 1. HOMEPAGE & ABOUT US CONTROLS */}
         {activeTab === 'home-settings' && (
           <form onSubmit={handleSaveHomeSettings} className="space-y-8">
             
             {/* Stats Editor */}
             <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
               <h3 className="font-serif font-bold text-slate-900 text-lg mb-1 flex items-center gap-2">
-                <Sliders size={18} className="text-amber-600" /> Editable Statistics Bar
+                <Sliders size={18} className="text-amber-600" /> Statistics Counter Bar
               </h3>
               <p className="text-xs text-slate-500 mb-6">Update the 4 statistics displayed across the homepage counter banner.</p>
 
@@ -454,15 +454,15 @@ export default function Admin() {
               </div>
             </div>
 
-            {/* About Us & Global WhatsApp Editor */}
+            {/* Homepage About Card Control */}
             <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
-              <h3 className="font-serif font-bold text-slate-900 text-lg mb-1">About Us Section & Global WhatsApp Support</h3>
-              <p className="text-xs text-slate-500 mb-4">Manage the copy and image for Home and About Us pages, plus the WhatsApp button number active on all pages.</p>
+              <h3 className="font-serif font-bold text-slate-900 text-lg mb-1">1. Homepage "About Our School" Card</h3>
+              <p className="text-xs text-slate-500 mb-4">This section appears on the Home page (and top summary box of About Us page).</p>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-3 text-xs">
+              <div className="grid md:grid-cols-2 gap-6 text-xs">
+                <div className="space-y-3">
                   <div>
-                    <label className="block font-bold mb-1 text-slate-700">About Title</label>
+                    <label className="block font-bold mb-1 text-slate-700">Title</label>
                     <input
                       type="text"
                       value={homeSettings.aboutTitle}
@@ -470,11 +470,10 @@ export default function Admin() {
                       className="w-full border border-slate-300 rounded p-2.5 bg-white"
                     />
                   </div>
-
                   <div>
-                    <label className="block font-bold mb-1 text-slate-700">About Description</label>
+                    <label className="block font-bold mb-1 text-slate-700">Description</label>
                     <textarea
-                      rows={6}
+                      rows={4}
                       value={homeSettings.aboutDescription}
                       onChange={(e) => setHomeSettings({ ...homeSettings, aboutDescription: e.target.value })}
                       className="w-full border border-slate-300 rounded p-2.5 bg-white leading-relaxed"
@@ -482,20 +481,9 @@ export default function Admin() {
                   </div>
                 </div>
 
-                <div className="space-y-3 text-xs">
+                <div className="space-y-3">
                   <div>
-                    <label className="block font-bold mb-1 text-slate-700">Global WhatsApp Support Phone Number (With Country Code)</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 2348012345678"
-                      value={homeSettings.whatsappNumber}
-                      onChange={(e) => setHomeSettings({ ...homeSettings, whatsappNumber: e.target.value })}
-                      className="w-full border border-slate-300 rounded p-2.5 bg-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold mb-1 text-slate-700">Upload Featured Image (Home & About Page)</label>
+                    <label className="block font-bold mb-1 text-slate-700">Upload Card Image (Optional)</label>
                     <input
                       type="file"
                       accept="image/*"
@@ -503,14 +491,75 @@ export default function Admin() {
                       className="w-full border border-slate-300 rounded p-2 bg-slate-50 text-slate-700 cursor-pointer"
                     />
                   </div>
-
                   {homeSettings.aboutImageUrl && (
                     <div>
-                      <p className="font-bold text-slate-700 mb-1">Current Featured Image Preview:</p>
-                      <img src={homeSettings.aboutImageUrl} alt="Current About" className="h-28 w-auto rounded border border-slate-200 object-cover" />
+                      <p className="font-bold text-slate-700 mb-1">Current Card Image:</p>
+                      <img src={homeSettings.aboutImageUrl} alt="Card Preview" className="h-24 w-auto rounded border border-slate-200 object-cover" />
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+
+            {/* About Page Principal Welcome Control */}
+            <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
+              <h3 className="font-serif font-bold text-slate-900 text-lg mb-1">2. About Us Page: Principal's Welcome Section</h3>
+              <p className="text-xs text-slate-500 mb-4">This section controls the Principal's Portrait and text on the main About Us page.</p>
+
+              <div className="grid md:grid-cols-2 gap-6 text-xs">
+                <div className="space-y-3">
+                  <div>
+                    <label className="block font-bold mb-1 text-slate-700">Section Headline Title</label>
+                    <input
+                      type="text"
+                      value={homeSettings.principalTitle || ''}
+                      onChange={(e) => setHomeSettings({ ...homeSettings, principalTitle: e.target.value })}
+                      className="w-full border border-slate-300 rounded p-2.5 bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 text-slate-700">Principal Message / Content</label>
+                    <textarea
+                      rows={6}
+                      value={homeSettings.principalDescription || ''}
+                      onChange={(e) => setHomeSettings({ ...homeSettings, principalDescription: e.target.value })}
+                      className="w-full border border-slate-300 rounded p-2.5 bg-white leading-relaxed"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="block font-bold mb-1 text-slate-700">Upload Principal Portrait Photo</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setPrincipalFile(e.target.files[0])}
+                      className="w-full border border-slate-300 rounded p-2 bg-slate-50 text-slate-700 cursor-pointer"
+                    />
+                  </div>
+                  {homeSettings.principalImageUrl && (
+                    <div>
+                      <p className="font-bold text-slate-700 mb-1">Current Principal Portrait:</p>
+                      <img src={homeSettings.principalImageUrl} alt="Principal Preview" className="h-32 w-auto rounded border border-slate-200 object-cover" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* WhatsApp Control */}
+            <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm text-xs space-y-3">
+              <h3 className="font-serif font-bold text-slate-900 text-lg">3. Floating WhatsApp Number</h3>
+              <div className="max-w-md">
+                <label className="block font-bold mb-1 text-slate-700">WhatsApp Phone Number (With Country Code)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 2348012345678"
+                  value={homeSettings.whatsappNumber}
+                  onChange={(e) => setHomeSettings({ ...homeSettings, whatsappNumber: e.target.value })}
+                  className="w-full border border-slate-300 rounded p-2.5 bg-white"
+                />
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex justify-end">
@@ -518,7 +567,7 @@ export default function Admin() {
                   type="submit"
                   className="flex items-center gap-2 bg-[#062016] hover:bg-emerald-950 text-amber-400 font-bold px-6 py-3 rounded text-xs uppercase tracking-wider transition shadow-md"
                 >
-                  <Save size={16} /> SAVE SETTINGS
+                  <Save size={16} /> SAVE ALL SITE SETTINGS
                 </button>
               </div>
             </div>
@@ -526,7 +575,7 @@ export default function Admin() {
           </form>
         )}
 
-        {/* 2. GALLERY MANAGEMENT */}
+        {/* Gallery Tab */}
         {activeTab === 'gallery' && (
           <div className="grid lg:grid-cols-12 gap-8">
             <div className="lg:col-span-5 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
@@ -607,7 +656,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* 3. NEWS MANAGEMENT */}
+        {/* News Tab */}
         {activeTab === 'news' && (
           <div className="grid lg:grid-cols-12 gap-8">
             <div className="lg:col-span-5 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm">
@@ -699,7 +748,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* 4. INQUIRIES & MESSAGES */}
+        {/* Messages Tab */}
         {activeTab === 'inquiries' && (
           <div className="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
             <h3 className="font-serif font-bold text-slate-900 text-lg mb-4">Incoming Contact & Admission Messages</h3>
