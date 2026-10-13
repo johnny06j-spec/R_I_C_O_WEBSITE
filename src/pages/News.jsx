@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Calendar, MapPin, ArrowRight, RefreshCw, Bell } from 'lucide-react'
+import { Calendar, MapPin, ArrowRight, RefreshCw, Bell, Image as ImageIcon } from 'lucide-react'
 import heroBg from '../assets/hero.png'
 
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
@@ -63,9 +63,22 @@ export default function News() {
     }
   }
 
+  // Resolve dynamic image URL correctly (Cloudinary HTTPS URL or relative /uploads path)
+  const getImageUrl = (item) => {
+    const rawUrl = item.imageUrl || item.image || item.imagePath
+    if (!rawUrl) return null
+    if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+      return rawUrl
+    }
+    return `${API_URL}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`
+  }
+
   const filteredNews = activeTab === 'All'
     ? news
-    : news.filter(item => item.category.toLowerCase() === activeTab.toLowerCase() || (activeTab === 'Events' && item.isUpcomingEvent))
+    : news.filter(item => 
+        (item.category && item.category.toLowerCase() === activeTab.toLowerCase()) || 
+        (activeTab === 'Events' && item.isUpcomingEvent)
+      )
 
   return (
     <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans">
@@ -96,7 +109,7 @@ export default function News() {
       {/* 2. TAB FILTERS */}
       <section className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-200">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {['All', 'Announcement', 'Academic', 'Sports', 'Events'].map((tab) => (
               <button
                 key={tab}
@@ -136,54 +149,65 @@ export default function News() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredNews.map((item) => (
-              <div 
-                key={item._id}
-                className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition"
-              >
-                <div>
-                  {item.imageUrl && (
-                    <div className="h-48 bg-slate-200 overflow-hidden relative">
-                      <img 
-                        src={item.imageUrl} 
-                        alt={item.title} 
-                        className="w-full h-full object-cover"
-                      />
-                      <span className="absolute top-3 left-3 bg-[#062016]/90 text-amber-400 text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider border border-amber-400/30">
-                        {item.category}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="p-6">
-                    <div className="flex items-center gap-4 text-[11px] text-slate-500 mb-3">
-                      <span className="flex items-center gap-1 font-semibold text-emerald-800">
-                        <Calendar size={13} /> {item.date}
-                      </span>
-                      {item.eventLocation && (
-                        <span className="flex items-center gap-1">
-                          <MapPin size={13} /> {item.eventLocation}
-                        </span>
+            {filteredNews.map((item) => {
+              const imgSrc = getImageUrl(item)
+              return (
+                <div 
+                  key={item._id}
+                  className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition"
+                >
+                  <div>
+                    <div className="h-48 bg-slate-200 overflow-hidden relative flex items-center justify-center">
+                      {imgSrc ? (
+                        <img 
+                          src={imgSrc} 
+                          alt={item.title} 
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none'
+                          }}
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-slate-400">
+                          <ImageIcon size={32} className="mb-1" />
+                          <span className="text-[10px] uppercase tracking-wider font-semibold">RICO Notice</span>
+                        </div>
                       )}
+                      <span className="absolute top-3 left-3 bg-[#062016]/90 text-amber-400 text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider border border-amber-400/30">
+                        {item.category || 'Announcement'}
+                      </span>
                     </div>
 
-                    <h3 className="font-serif font-bold text-slate-900 text-lg leading-snug mb-3">
-                      {item.title}
-                    </h3>
+                    <div className="p-6">
+                      <div className="flex items-center gap-4 text-[11px] text-slate-500 mb-3">
+                        <span className="flex items-center gap-1 font-semibold text-emerald-800">
+                          <Calendar size={13} /> {item.date || 'Recent'}
+                        </span>
+                        {item.eventLocation && (
+                          <span className="flex items-center gap-1">
+                            <MapPin size={13} /> {item.eventLocation}
+                          </span>
+                        )}
+                      </div>
 
-                    <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                      {item.summary}
-                    </p>
+                      <h3 className="font-serif font-bold text-slate-900 text-lg leading-snug mb-3 break-words">
+                        {item.title}
+                      </h3>
+
+                      <p className="text-xs text-slate-600 leading-relaxed mb-4 break-words whitespace-pre-line">
+                        {item.summary}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-6 pt-0 border-t border-slate-100 mt-auto">
+                    <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider inline-flex items-center gap-1 mt-4">
+                      READ FULL NOTICE <ArrowRight size={13} />
+                    </span>
                   </div>
                 </div>
-
-                <div className="p-6 pt-0 border-t border-slate-100 mt-auto">
-                  <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider inline-flex items-center gap-1 mt-4">
-                    READ FULL NOTICE <ArrowRight size={13} />
-                  </span>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </section>
