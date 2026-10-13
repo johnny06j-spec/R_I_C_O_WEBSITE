@@ -9,7 +9,7 @@ export default function Admin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
-  const [activeTab, setActiveTab] = useState('home-settings') // 'home-settings' | 'gallery' | 'news' | 'inquiries'
+  const [activeTab, setActiveTab] = useState('home-settings')
 
   // Data states
   const [galleryList, setGalleryList] = useState([])
@@ -84,10 +84,11 @@ export default function Admin() {
 
   const fetchAdminData = async () => {
     try {
+      const headers = { 'Authorization': `Bearer ${token}` }
       const [galRes, newsRes, conRes, homeRes] = await Promise.all([
         fetch(`${API_URL}/api/gallery`),
         fetch(`${API_URL}/api/news`),
-        fetch(`${API_URL}/api/contact`),
+        fetch(`${API_URL}/api/contact`, { headers }),
         fetch(`${API_URL}/api/home-settings`)
       ])
 
@@ -119,7 +120,7 @@ export default function Admin() {
     try {
       let imageUrl = homeSettings.aboutImageUrl
 
-      // Optional image upload to Cloudinary via backend gallery/upload route
+      // Optional image upload to Cloudinary via backend gallery route
       if (aboutFile) {
         const imageFormData = new FormData()
         imageFormData.append('title', 'About Section Image')
