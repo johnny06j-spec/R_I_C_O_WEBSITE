@@ -4,6 +4,13 @@ import { Lock, LogOut, Image, Newspaper, Mail, Plus, Trash2, CheckCircle2, Shiel
 // Dynamic API Base URL from environment variable or local fallback
 const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 
+const DEFAULT_STATS = [
+  { value: '700+', label: 'STUDENTS', subtext: 'Future leaders in the making' },
+  { value: '45+', label: 'QUALIFIED TEACHERS', subtext: 'Dedicated and experienced' },
+  { value: '98%', label: 'SUCCESS RATE', subtext: 'Consistent academic excellence' },
+  { value: '15+', label: 'YEARS OF EXCELLENCE', subtext: 'A legacy of impact' }
+]
+
 export default function Admin() {
   const [token, setToken] = useState(localStorage.getItem('rico_admin_token') || '')
   const [username, setUsername] = useState('')
@@ -18,12 +25,7 @@ export default function Admin() {
 
   // Home Settings State
   const [homeSettings, setHomeSettings] = useState({
-    stats: [
-      { value: '700+', label: 'STUDENTS', subtext: 'Future leaders in the making' },
-      { value: '45+', label: 'QUALIFIED TEACHERS', subtext: 'Dedicated and experienced' },
-      { value: '98%', label: 'SUCCESS RATE', subtext: 'Consistent academic excellence' },
-      { value: '15+', label: 'YEARS OF EXCELLENCE', subtext: 'A legacy of impact' }
-    ],
+    stats: DEFAULT_STATS,
     aboutTitle: 'Nurturing Minds. Building Leaders.',
     aboutDescription: "At Radiant Intellectuals' College, we are committed to raising a generation of learners who excel academically, demonstrate strong moral values and become purposeful leaders in their communities and the world.",
     aboutImageUrl: '',
@@ -97,8 +99,11 @@ export default function Admin() {
       if (conRes.ok) setContactList(await conRes.json())
       if (homeRes.ok) {
         const homeData = await homeRes.json()
-        if (homeData && homeData.stats) {
-          setHomeSettings(homeData)
+        if (homeData) {
+          setHomeSettings({
+            ...homeData,
+            stats: (homeData.stats && homeData.stats.length > 0) ? homeData.stats : DEFAULT_STATS
+          })
         }
       }
     } catch (err) {
@@ -108,7 +113,8 @@ export default function Admin() {
 
   // --- Update Home Settings ---
   const handleStatChange = (index, field, val) => {
-    const updatedStats = [...homeSettings.stats]
+    const currentStats = homeSettings.stats && homeSettings.stats.length > 0 ? homeSettings.stats : DEFAULT_STATS
+    const updatedStats = [...currentStats]
     updatedStats[index] = { ...updatedStats[index], [field]: val }
     setHomeSettings({ ...homeSettings, stats: updatedStats })
   }
@@ -139,7 +145,11 @@ export default function Admin() {
         }
       }
 
-      const payload = { ...homeSettings, aboutImageUrl: imageUrl }
+      const payload = {
+        ...homeSettings,
+        stats: homeSettings.stats && homeSettings.stats.length > 0 ? homeSettings.stats : DEFAULT_STATS,
+        aboutImageUrl: imageUrl
+      }
 
       const res = await fetch(`${API_URL}/api/home-settings`, {
         method: 'PUT',
@@ -151,9 +161,13 @@ export default function Admin() {
       })
 
       if (res.ok) {
+        const updatedData = await res.json()
         setStatusMsg('Homepage settings updated successfully!')
         setAboutFile(null)
-        fetchAdminData()
+        setHomeSettings({
+          ...updatedData,
+          stats: (updatedData.stats && updatedData.stats.length > 0) ? updatedData.stats : DEFAULT_STATS
+        })
       } else {
         setStatusMsg('Failed to update homepage settings.')
       }
@@ -324,6 +338,9 @@ export default function Admin() {
     )
   }
 
+  // Safely resolve stats to display
+  const displayStats = homeSettings.stats && homeSettings.stats.length > 0 ? homeSettings.stats : DEFAULT_STATS
+
   // AUTHENTICATED: DASHBOARD VIEW
   return (
     <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans pb-16">
@@ -402,7 +419,7 @@ export default function Admin() {
               <p className="text-xs text-slate-500 mb-6">Update the 4 statistics displayed across the homepage counter banner.</p>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {homeSettings.stats.map((stat, idx) => (
+                {displayStats.map((stat, idx) => (
                   <div key={idx} className="border border-slate-200 rounded-lg p-4 bg-slate-50/50 space-y-2">
                     <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest block">Stat #{idx + 1}</span>
                     <div>
