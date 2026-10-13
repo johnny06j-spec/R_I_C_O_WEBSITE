@@ -1,45 +1,78 @@
-import { ArrowRight, User, GraduationCap, Users, Trophy, Building2, BookOpen, ShieldCheck, Lightbulb, Heart } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { 
+  ArrowRight, 
+  User, 
+  GraduationCap, 
+  Users, 
+  Trophy, 
+  Building2, 
+  BookOpen, 
+  ShieldCheck, 
+  Lightbulb, 
+  Heart,
+  MessageCircle 
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
-import heroBg from '../assets/hero.png' // Make sure your aerial RICO image is here
-import logo from '../assets/logo.png'   // Make sure your clean logo crest is here
+import heroBg from '../assets/hero.png'
+import logo from '../assets/logo.png'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 export default function Home() {
+  const [settings, setSettings] = useState(null)
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/home-settings`)
+      .then((res) => res.json())
+      .then((data) => setSettings(data))
+      .catch((err) => console.error('Error loading homepage settings:', err))
+  }, [])
+
+  const statIcons = [
+    <GraduationCap key="students" size={22} />,
+    <Users key="teachers" size={22} />,
+    <Trophy key="success" size={22} />,
+    <Building2 key="years" size={22} />
+  ]
+
+  const statsList = settings?.stats || [
+    { value: '700+', label: 'STUDENTS', subtext: 'Future leaders in the making' },
+    { value: '45+', label: 'QUALIFIED TEACHERS', subtext: 'Dedicated and experienced' },
+    { value: '98%', label: 'SUCCESS RATE', subtext: 'Consistent academic excellence' },
+    { value: '15+', label: 'YEARS OF EXCELLENCE', subtext: 'A legacy of impact' }
+  ]
+
+  const whatsappNumber = settings?.whatsappNumber || '2348000000000'
+  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hello,%20I%20would%20like%20to%20make%20an%20enquiry%20about%20Radiant%20Intellectuals'%20College.`
+
   return (
-    <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans">
+    <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans relative">
       
-      {/* 1. HERO SECTION WITH VIBRANT FULL-BLEED BACKGROUND */}
+      {/* 1. HERO SECTION WITH VIBRANT BACKGROUND */}
       <section className="relative min-h-[640px] flex items-center overflow-hidden border-b border-emerald-900/30">
-        
-        {/* Full Image Background (Vibrant & Clear) */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${heroBg})` }}
         />
-
-        {/* Soft gradient fade on the left to keep text ultra-readable without darkening the right side */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#062016]/90 via-[#062016]/65 to-transparent md:to-[#062016]/10" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10 w-full">
           <div className="max-w-xl">
-            
-            
-{/* Main Brand Header inside Hero */}
-<div className="flex items-center gap-3 mb-6">
-  <img src={logo} alt="RICO Crest" className="h-16 sm:h-20 w-auto object-contain mix-blend-screen" />
-  <div>
-    <h2 className="font-serif font-extrabold text-2xl sm:text-3xl text-white tracking-wider leading-none">
-      RADIANT
-    </h2>
-    <p className="text-amber-400 font-serif font-semibold text-xs sm:text-sm tracking-[0.2em] uppercase mt-1">
-      INTELLECTUALS' COLLEGE
-    </p>
-    <p className="text-[10px] text-amber-300 italic tracking-widest uppercase mt-1">
-      EMMANUEL, EXCELLENCE.
-    </p>
-  </div>
-</div>
-            {/* Headline */}
+            <div className="flex items-center gap-3 mb-6">
+              <img src={logo} alt="RICO Crest" className="h-16 sm:h-20 w-auto object-contain mix-blend-screen" />
+              <div>
+                <h2 className="font-serif font-extrabold text-2xl sm:text-3xl text-white tracking-wider leading-none">
+                  RADIANT
+                </h2>
+                <p className="text-amber-400 font-serif font-semibold text-xs sm:text-sm tracking-[0.2em] uppercase mt-1">
+                  INTELLECTUALS' COLLEGE
+                </p>
+                <p className="text-[10px] text-amber-300 italic tracking-widest uppercase mt-1">
+                  EMMANUEL, EXCELLENCE.
+                </p>
+              </div>
+            </div>
+
             <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white leading-tight mb-3 drop-shadow">
               Excellence in Learning, <br />
               <span className="text-amber-400">Character for Life.</span>
@@ -49,7 +82,6 @@ export default function Home() {
               Nurturing future leaders through quality education, strong values and a commitment to excellence.
             </p>
 
-            {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-4">
               <Link
                 to="/admissions"
@@ -58,7 +90,7 @@ export default function Home() {
                 ENROLL NOW <ArrowRight size={16} />
               </Link>
               <a
-                href="https://app.radiantintellectuals.com"
+                href="https://portal.radiantintellectualscollege.com"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-3 bg-[#062016]/80 hover:bg-[#062016] text-white border border-slate-300/40 font-semibold px-5 py-2.5 rounded text-xs tracking-wider transition backdrop-blur-sm"
@@ -72,59 +104,25 @@ export default function Home() {
                 </div>
               </a>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* 2. STATS BAR */}
+      {/* 2. DYNAMIC STATS BAR */}
       <section className="bg-[#051810] text-white py-6 border-b-4 border-amber-400 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-          
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 flex items-center justify-center text-amber-400 bg-[#0a2e20] shrink-0">
-              <GraduationCap size={22} />
+          {statsList.map((stat, idx) => (
+            <div key={idx} className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 flex items-center justify-center text-amber-400 bg-[#0a2e20] shrink-0">
+                {statIcons[idx % statIcons.length]}
+              </div>
+              <div>
+                <p className="text-2xl font-serif font-bold text-white">{stat.value}</p>
+                <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider">{stat.label}</p>
+                <p className="text-[10px] text-slate-400">{stat.subtext}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-2xl font-serif font-bold text-white">700+</p>
-              <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider">STUDENTS</p>
-              <p className="text-[10px] text-slate-400">Future leaders in the making</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 flex items-center justify-center text-amber-400 bg-[#0a2e20] shrink-0">
-              <Users size={22} />
-            </div>
-            <div>
-              <p className="text-2xl font-serif font-bold text-white">45+</p>
-              <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider">QUALIFIED TEACHERS</p>
-              <p className="text-[10px] text-slate-400">Dedicated and experienced</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 flex items-center justify-center text-amber-400 bg-[#0a2e20] shrink-0">
-              <Trophy size={22} />
-            </div>
-            <div>
-              <p className="text-2xl font-serif font-bold text-white">98%</p>
-              <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider">SUCCESS RATE</p>
-              <p className="text-[10px] text-slate-400">Consistent academic excellence</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 flex items-center justify-center text-amber-400 bg-[#0a2e20] shrink-0">
-              <Building2 size={22} />
-            </div>
-            <div>
-              <p className="text-2xl font-serif font-bold text-white">15+</p>
-              <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider">YEARS OF EXCELLENCE</p>
-              <p className="text-[10px] text-slate-400">A legacy of impact</p>
-            </div>
-          </div>
-
+          ))}
         </div>
       </section>
 
@@ -132,7 +130,7 @@ export default function Home() {
       <section className="py-14 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-6">
           
-          {/* Card 1: About Our School (Wide 5-cols) */}
+          {/* Card 1: DYNAMIC ABOUT OUR SCHOOL */}
           <div className="lg:col-span-5 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
             <div className="grid sm:grid-cols-2 gap-4 items-center">
               <div>
@@ -140,11 +138,15 @@ export default function Home() {
                   ABOUT OUR SCHOOL
                 </span>
                 <h3 className="font-serif font-bold text-slate-900 text-xl leading-snug mb-3">
-                  Nurturing Minds. <br />
-                  Building Leaders.
+                  {settings?.aboutTitle || (
+                    <>
+                      Nurturing Minds. <br />
+                      Building Leaders.
+                    </>
+                  )}
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                  At Radiant Intellectuals' College, we are committed to raising a generation of learners who excel academically, demonstrate strong moral values and become purposeful leaders in their communities and the world.
+                  {settings?.aboutDescription || "At Radiant Intellectuals' College, we are committed to raising a generation of learners who excel academically, demonstrate strong moral values and become purposeful leaders in their communities and the world."}
                 </p>
                 <Link
                   to="/about"
@@ -153,16 +155,19 @@ export default function Home() {
                   LEARN MORE <ArrowRight size={14} />
                 </Link>
               </div>
-              <div className="h-48 sm:h-full rounded-lg bg-slate-200 overflow-hidden relative">
-                {/* Classroom Image Placeholder */}
-                <div className="absolute inset-0 bg-emerald-950/20 flex items-center justify-center text-xs text-slate-600 font-semibold text-center p-2">
-                  Students Learning
-                </div>
+              <div className="h-48 sm:h-full rounded-lg bg-slate-200 overflow-hidden relative min-h-[160px]">
+                {settings?.aboutImageUrl ? (
+                  <img src={settings.aboutImageUrl} alt="Students Learning" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 bg-emerald-950/20 flex items-center justify-center text-xs text-slate-600 font-semibold text-center p-2">
+                    Students Learning
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Card 2: Academics (4-cols) */}
+          {/* Card 2: Academics */}
           <div className="lg:col-span-4 bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
             <div>
               <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest block mb-1">
@@ -186,7 +191,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Card 3: Admissions Dark Callout (3-cols) */}
+          {/* Card 3: Admissions Dark Callout */}
           <div className="lg:col-span-3 bg-[#051810] text-white p-6 rounded-xl shadow-md flex flex-col justify-between relative overflow-hidden">
             <div className="relative z-10">
               <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block mb-1">
@@ -212,10 +217,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. FOUR CORE VALUE PILLARS AT THE BOTTOM */}
+      {/* 4. CORE VALUE PILLARS */}
       <section className="border-t border-slate-200/80 bg-white py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-6">
-          
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#062016] text-amber-400 flex items-center justify-center shrink-0">
               <Heart size={18} />
@@ -255,9 +259,20 @@ export default function Home() {
               <p className="text-[10px] text-slate-500 leading-tight mt-0.5">Providing a secure, inclusive learning environment.</p>
             </div>
           </div>
-
         </div>
       </section>
+
+      {/* 5. FLOATING WHATSAPP BUTTON */}
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 px-5 rounded-full shadow-2xl transition-transform hover:scale-105 active:scale-95"
+        aria-label="Chat with us on WhatsApp"
+      >
+        <MessageCircle size={22} className="fill-current" />
+        <span className="text-xs uppercase tracking-wider">Chat with us</span>
+      </a>
 
     </div>
   )
