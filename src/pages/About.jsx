@@ -1,28 +1,13 @@
-import { useEffect, useState } from 'react'
-import { ArrowRight, BookOpen, ShieldCheck, Heart, Lightbulb, Target, Compass, Award, MessageCircle } from 'lucide-react'
+import { ArrowRight, BookOpen, ShieldCheck, Heart, Lightbulb, Target, Compass, Award } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import logo from '../assets/logo.png'
-import heroBg from '../assets/hero.png'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+import logo from '../assets/logo.png' // Clean crest logo
+import heroBg from '../assets/hero.png' // Campus background image
 
 export default function About() {
-  const [settings, setSettings] = useState(null)
-
-  useEffect(() => {
-    fetch(`${API_BASE}/api/home-settings`)
-      .then((res) => res.json())
-      .then((data) => setSettings(data))
-      .catch((err) => console.error('Error loading settings on About page:', err))
-  }, [])
-
-  const whatsappNumber = settings?.whatsappNumber || '2348000000000'
-  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hello,%20I%20would%20like%20to%20make%20an%20enquiry%20about%20Radiant%20Intellectuals'%20College.`
-
   return (
-    <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans relative overflow-x-hidden">
+    <div className="bg-[#f7f5ee] min-h-screen text-slate-800 font-sans">
       
-      {/* 1. HEADER BANNER */}
+      {/* 1. HEADER BREEZE BANNER */}
       <section className="relative bg-[#062016] text-white py-16 overflow-hidden border-b border-emerald-900/40">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-20"
@@ -45,48 +30,47 @@ export default function About() {
         </div>
       </section>
 
-      {/* 2. PRINCIPAL'S WELCOME & ABOUT SECTION */}
+      {/* 2. PRINCIPAL'S WELCOME */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           
-          {/* Principal's Portrait Placeholder / Featured Image Container */}
+          {/* Image / Portrait Placeholder */}
           <div className="lg:col-span-5">
             <div className="relative">
-              <div className="aspect-[4/5] rounded-xl bg-[#d5dcde] border-4 border-white shadow-xl overflow-hidden relative flex items-center justify-center">
-                {settings?.aboutImageUrl ? (
-                  <img 
-                    src={settings.aboutImageUrl} 
-                    alt="Principal / School Management" 
-                    className="w-full h-full object-cover" 
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-slate-300/40 flex flex-col items-center justify-center text-slate-600 p-6 text-center">
-                    <div className="w-20 h-20 rounded-full bg-[#062016] text-amber-400 flex items-center justify-center mb-4 shadow-lg">
-                      <Award size={36} />
-                    </div>
-                    <span className="font-serif font-bold text-slate-900 text-xl">Principal's Portrait</span>
-                    <span className="text-xs text-slate-600 mt-1 font-medium">Radiant Intellectuals' College</span>
+              <div className="aspect-[4/5] rounded-xl bg-slate-200 border-4 border-white shadow-xl overflow-hidden relative">
+                {/* Swap with real portrait image in assets later */}
+                <div className="absolute inset-0 bg-[#062016]/10 flex flex-col items-center justify-center text-slate-500 p-6 text-center">
+                  <div className="w-20 h-20 rounded-full bg-[#062016] text-amber-400 flex items-center justify-center mb-4">
+                    <Award size={36} />
                   </div>
-                )}
+                  <span className="font-serif font-bold text-slate-800 text-lg">Principal's Portrait</span>
+                  <span className="text-xs text-slate-500 mt-1">Radiant Intellectuals' College</span>
+                </div>
               </div>
-              <div className="absolute -bottom-6 -right-6 bg-[#051810] text-white p-4 rounded-lg shadow-lg border border-amber-400/40 hidden sm:block z-10">
+              <div className="absolute -bottom-6 -right-6 bg-[#051810] text-white p-4 rounded-lg shadow-lg border border-amber-400/40 hidden sm:block">
                 <p className="font-serif font-bold text-amber-400 text-sm">EMMANUEL, EXCELLENCE.</p>
                 <p className="text-[10px] text-slate-300 uppercase tracking-wider">Our Guiding Light</p>
               </div>
             </div>
           </div>
 
-          {/* Dynamic About Text Content */}
+          {/* Text Content */}
           <div className="lg:col-span-7">
             <span className="text-xs font-bold text-amber-600 uppercase tracking-widest block mb-2">
               WELCOME TO RICO
             </span>
-            <h2 className="font-serif font-extrabold text-slate-900 text-2xl sm:text-4xl leading-tight mb-6 break-words">
-              {settings?.aboutTitle || 'Building a Legacy of Intellectual & Character Excellence'}
+            <h2 className="font-serif font-extrabold text-slate-900 text-2xl sm:text-4xl leading-tight mb-6">
+              Building a Legacy of Intellectual & Character Excellence
             </h2>
-            <div className="space-y-4 text-slate-600 text-sm leading-relaxed break-words whitespace-pre-line">
+            <div className="space-y-4 text-slate-600 text-sm leading-relaxed">
               <p>
-                {settings?.aboutDescription || "At Radiant Intellectuals' College, we believe that true education reaches beyond academic scores. It shapes the mind, strengthens moral character, and equips young individuals to lead purposefully in an evolving world."}
+                At Radiant Intellectuals' College, we believe that true education reaches beyond academic scores. It shapes the mind, strengthens moral character, and equips young individuals to lead purposefully in an evolving world.
+              </p>
+              <p>
+                Founded on unwavering ethical principles and a dedication to world-class learning, our institution provides a secure, modern, and supportive environment where every student is inspired to discover their potential.
+              </p>
+              <p>
+                Whether in our state-of-the-art classrooms, science laboratories, or sports grounds, our dedicated educators nurture curiosity, critical thinking, and godliness in all learners.
               </p>
             </div>
 
@@ -106,6 +90,7 @@ export default function About() {
       <section className="bg-[#051810] text-white py-16 border-y-4 border-amber-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8">
           
+          {/* Mission Card */}
           <div className="bg-[#0a2e20] p-8 rounded-xl border border-emerald-800/60 shadow-lg relative overflow-hidden">
             <div className="w-12 h-12 rounded-full bg-amber-400/10 border border-amber-400/40 text-amber-400 flex items-center justify-center mb-6">
               <Target size={24} />
@@ -118,6 +103,7 @@ export default function About() {
             </p>
           </div>
 
+          {/* Vision Card */}
           <div className="bg-[#0a2e20] p-8 rounded-xl border border-emerald-800/60 shadow-lg relative overflow-hidden">
             <div className="w-12 h-12 rounded-full bg-amber-400/10 border border-amber-400/40 text-amber-400 flex items-center justify-center mb-6">
               <Compass size={24} />
@@ -187,7 +173,23 @@ export default function About() {
         </div>
       </section>
 
-      {/* 5. CALL TO ACTION BAR */}
+      {/* 5. SCHOOL ANTHEM / MOTTO SECTION */}
+      <section className="bg-white py-14 border-t border-slate-200">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <img src={logo} alt="RICO Crest" className="h-16 w-auto mx-auto mb-4 object-contain mix-blend-multiply" />
+          <h3 className="font-serif font-extrabold text-2xl text-slate-900 mb-1">SCHOOL MOTTO</h3>
+          <p className="text-amber-600 font-serif font-bold text-lg tracking-widest uppercase mb-6">
+            "EMMANUEL, EXCELLENCE."
+          </p>
+          <div className="p-6 bg-[#f7f5ee] rounded-xl border border-amber-200/60 shadow-inner">
+            <p className="text-xs text-slate-600 italic leading-relaxed max-w-xl mx-auto">
+              God with us in all our endeavors, driving our pursuit of intellectual, moral, and social leadership.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. CALL TO ACTION BAR */}
       <section className="bg-[#062016] text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
@@ -204,18 +206,6 @@ export default function About() {
           </div>
         </div>
       </section>
-
-      {/* 6. FLOATING WHATSAPP SUPPORT BUTTON */}
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 px-5 rounded-full shadow-2xl transition-transform hover:scale-105 active:scale-95"
-        aria-label="Chat with us on WhatsApp"
-      >
-        <MessageCircle size={22} className="fill-current" />
-        <span className="text-xs uppercase tracking-wider">Chat with us</span>
-      </a>
 
     </div>
   )
